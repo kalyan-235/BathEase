@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Nav }    from '@/components/Nav';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/button';
+import { ViewDetails } from '@/components/ViewDetails';
 import { MINI_SERVICES, inr } from '@/lib/bathease';
 import { Bath, CheckCircle2, Star, Zap, Shield, Clock, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -101,7 +102,10 @@ const bathroomPackages = [
     price: 499,
     originalPrice: null,
     badge: null,
-    color: 'from-blue-500 to-cyan-500',
+    image: '/img6.png',
+    rating: 4.9,
+    reviews: 1240,
+    duration: '1 hour',
     features: ['Full scrub & descale', 'Tile cleaning', 'Mirror polish', 'Sanitization'],
   },
   {
@@ -111,8 +115,11 @@ const bathroomPackages = [
     price: 898,
     originalPrice: 998,
     badge: '10% OFF',
-    color: 'from-primary to-teal-500',
-    features: ['Everything in Single', '10% bundle discount', 'Priority scheduling', 'Free re-clean if needed'],
+    image: '/img6.png',
+    rating: 4.9,
+    reviews: 950,
+    duration: '1.5 hours',
+    features: ['Full scrub & descale', 'Tile cleaning', 'Mirror polish', 'Sanitization'],
   },
   {
     id: 3,
@@ -121,8 +128,11 @@ const bathroomPackages = [
     price: 1197,
     originalPrice: 1497,
     badge: '20% OFF',
-    color: 'from-violet-500 to-purple-600',
-    features: ['Everything in Double', '20% bundle discount', 'Same-day availability', 'Dedicated cleaner'],
+    image: '/img6.png',
+    rating: 4.8,
+    reviews: 820,
+    duration: '2 hours',
+    features: ['Full scrub & descale', 'Tile cleaning', 'Mirror polish', 'Sanitization'],
   },
   {
     id: 4,
@@ -131,8 +141,11 @@ const bathroomPackages = [
     price: 1596,
     originalPrice: 1996,
     badge: '20% OFF',
-    color: 'from-orange-500 to-rose-500',
-    features: ['Everything in Triple', 'Team of 2 cleaners', 'Post-clean inspection', 'Invoice provided'],
+    image: '/img6.png',
+    rating: 4.8,
+    reviews: 680,
+    duration: '2.5 hours',
+    features: ['Full scrub & descale', 'Tile cleaning', 'Mirror polish', 'Sanitization'],
   },
   {
     id: 5,
@@ -141,8 +154,90 @@ const bathroomPackages = [
     price: 1995,
     originalPrice: 2495,
     badge: 'BEST VALUE',
-    color: 'from-emerald-500 to-green-600',
-    features: ['Everything in Four', 'Team of 2 cleaners', 'Flexible time slots', 'Monthly plan available'],
+    image: '/img6.png',
+    rating: 4.9,
+    reviews: 1100,
+    duration: '3 hours',
+    features: ['Full scrub & descale', 'Tile cleaning', 'Mirror polish', 'Sanitization'],
+  },
+];
+
+// ── Value Deals (Combinations) ────────────────────────────────────────────────
+const valueDeals = [
+  {
+    id: 1,
+    title: 'Single + Exhaust Fan',
+    bathrooms: 1,
+    basePrice: 499,
+    addonPrice: 149,
+    totalPrice: 599,
+    originalPrice: 699,
+    badge: 'SAVE ₹100',
+    image: '/exhaust_fan.jpeg',
+    rating: 4.9,
+    reviews: 890,
+    duration: '1.5 hours',
+    features: ['Full scrub & descale', 'Tile cleaning', 'Mirror polish', 'Exhaust fan cleaning'],
+  },
+  {
+    id: 2,
+    title: 'Single + Washbasin',
+    bathrooms: 1,
+    basePrice: 499,
+    addonPrice: 199,
+    totalPrice: 649,
+    originalPrice: 798,
+    badge: 'SAVE ₹149',
+    image: '/washbasin1.jpeg',
+    rating: 4.9,
+    reviews: 756,
+    duration: '1.5 hours',
+    features: ['Full scrub & descale', 'Tile cleaning', 'Washbasin upgrade', 'Sanitization'],
+  },
+  {
+    id: 3,
+    title: 'Double + Floor Finishing',
+    bathrooms: 2,
+    basePrice: 898,
+    addonPrice: 250,
+    totalPrice: 1099,
+    originalPrice: 1298,
+    badge: 'SAVE ₹199',
+    image: '/tile_cleaning.jpeg',
+    rating: 4.8,
+    reviews: 614,
+    duration: '2 hours',
+    features: ['Everything in Double', 'Premium floor finishing', 'Grout protection', 'Sanitization'],
+  },
+  {
+    id: 4,
+    title: 'Double + Ceilling Fan',
+    bathrooms: 2,
+    basePrice: 898,
+    addonPrice: 299,
+    totalPrice: 1149,
+    originalPrice: 1447,
+    badge: 'SAVE ₹298',
+    image: '/bathroom_ceillingfan.jpeg',
+    rating: 4.9,
+    reviews: 502,
+    duration: '2.25 hours',
+    features: ['Everything in Double', 'Exhaust fan cleaning', 'Ventilation upgrade', 'Full sanitization'],
+  },
+  {
+    id: 5,
+    title: 'Triple + Premium Package',
+    bathrooms: 3,
+    basePrice: 1197,
+    addonPrice: 399,
+    totalPrice: 1549,
+    originalPrice: 1997,
+    badge: 'SAVE ₹448',
+    image: '/img6.png',
+    rating: 4.8,
+    reviews: 441,
+    duration: '2.5 hours',
+    features: ['Everything in Triple', 'Premium floor coating', 'Fan cleaning', 'Wall polishing'],
   },
 ];
 
@@ -155,6 +250,8 @@ const highlights = [
 ];
 
 export default function ServicesPage() {
+  const [selectedService, setSelectedService] = useState(null);
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Nav />
@@ -186,7 +283,6 @@ export default function ServicesPage() {
       <section className="mx-auto max-w-7xl w-full px-6 pb-16">
         <div className="mb-8">
           <h2 className="text-2xl font-bold">Bathroom Deep Clean Packages</h2>
-          <p className="text-muted-foreground mt-1">More bathrooms = bigger savings. Scroll to explore →</p>
         </div>
 
         {/* Scrollable row */}
@@ -194,27 +290,59 @@ export default function ServicesPage() {
           {bathroomPackages.map((pkg, i) => (
             <div
               key={pkg.id}
-              className="snap-start shrink-0 w-64 rounded-3xl border border-border/60 bg-card shadow-soft flex flex-col overflow-hidden"
+              className="snap-start shrink-0 w-64 rounded-3xl border border-border/60 bg-card shadow-soft flex flex-col overflow-hidden hover:shadow-md transition-shadow"
             >
-              {/* Card top gradient */}
-              <div className={`bg-gradient-to-br ${pkg.color} p-5 text-white relative`}>
-                {pkg.badge && (
-                  <span className="absolute top-3 right-3 rounded-full bg-white/20 backdrop-blur px-2.5 py-0.5 text-[11px] font-bold tracking-wide">
-                    {pkg.badge}
-                  </span>
-                )}
-                <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white/20 mb-3">
-                  <Bath className="h-6 w-6" />
-                </div>
-                <h3 className="text-lg font-bold">{pkg.title}</h3>
-                <p className="text-sm text-white/80 mt-0.5">{pkg.bathrooms} bathroom{pkg.bathrooms > 1 ? 's' : ''}</p>
-
-                {/* Price */}
-                <div className="mt-4 flex items-end gap-2">
-                  <span className="text-3xl font-extrabold">{inr(pkg.price)}</span>
-                  {pkg.originalPrice && (
-                    <span className="text-sm text-white/60 line-through mb-1">{inr(pkg.originalPrice)}</span>
+              {/* Card top with image background */}
+              <div 
+                className="p-5 text-white relative"
+                style={{
+                  backgroundImage: `url('${pkg.image}')`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  minHeight: '180px',
+                }}
+              >
+                {/* Dark overlay for text readability */}
+                <div className="absolute inset-0 bg-black/40" />
+                
+                <div className="relative z-10">
+                  {pkg.badge && (
+                    <span className="absolute top-3 right-3 rounded-full bg-white/20 backdrop-blur px-2.5 py-0.5 text-[11px] font-bold tracking-wide">
+                      {pkg.badge}
+                    </span>
                   )}
+                  <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white/20 mb-3">
+                    <Bath className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg font-bold">{pkg.title}</h3>
+                  <p className="text-sm text-white/80 mt-0.5">{pkg.bathrooms} bathroom{pkg.bathrooms > 1 ? 's' : ''}</p>
+
+                  {/* Price */}
+                  <div className="mt-4 flex items-end gap-2">
+                    <span className="text-3xl font-extrabold">{inr(pkg.price)}</span>
+                    {pkg.originalPrice && (
+                      <span className="text-sm text-white/60 line-through mb-1">{inr(pkg.originalPrice)}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Rating & Time Info */}
+              <div className="px-5 pt-4 pb-2 border-b border-border/40">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-0.5">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                      ))}
+                    </div>
+                    <span className="font-semibold text-foreground ml-1">{pkg.rating}</span>
+                    <span className="text-muted-foreground">({pkg.reviews})</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-muted-foreground">
+                    <Clock className="h-3.5 w-3.5" />
+                    <span className="text-xs font-medium">{pkg.duration}</span>
+                  </div>
                 </div>
               </div>
 
@@ -230,9 +358,103 @@ export default function ServicesPage() {
                 </ul>
 
                 <div className="mt-auto pt-2">
-                  <Link to={`/booking?bathrooms=${pkg.bathrooms}`}>
-                    <Button className="w-full" size="sm">
-                      Book now <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                  <Button 
+                    className="w-full"
+                    size="sm"
+                    onClick={() => setSelectedService(pkg)}
+                  >
+                    View Details <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Value Deals — Combination Packages ── */}
+      <section className="mx-auto max-w-7xl w-full px-6 pb-16">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold">Value Deals</h2>
+          <p className="text-muted-foreground mt-1">Get more with bundle packages. Save up to ₹500 when you combine services.</p>
+        </div>
+
+        {/* Scrollable row */}
+        <div className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-border">
+          {valueDeals.map((deal, i) => (
+            <div
+              key={deal.id}
+              className="snap-start shrink-0 w-64 rounded-3xl border border-border/60 bg-card shadow-soft flex flex-col overflow-hidden hover:shadow-md transition-shadow"
+            >
+              {/* Card top with image background */}
+              <div 
+                className="p-5 text-white relative"
+                style={{
+                  backgroundImage: `url('${deal.image}')`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  minHeight: '180px',
+                }}
+              >
+                {/* Dark overlay for text readability */}
+                <div className="absolute inset-0 bg-black/40" />
+                
+                <div className="relative z-10">
+                  {deal.badge && (
+                    <span className="absolute top-3 right-3 rounded-full bg-green-500/90 backdrop-blur px-2.5 py-0.5 text-[11px] font-bold tracking-wide">
+                      {deal.badge}
+                    </span>
+                  )}
+                  <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white/20 mb-3">
+                    <Bath className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg font-bold">{deal.title}</h3>
+                  <p className="text-sm text-white/80 mt-0.5">{deal.bathrooms} Bathroom{deal.bathrooms > 1 ? 's' : ''} + Add-on</p>
+
+                  {/* Price */}
+                  <div className="mt-4 flex items-end gap-2">
+                    <span className="text-3xl font-extrabold">{inr(deal.totalPrice)}</span>
+                    {deal.originalPrice && (
+                      <span className="text-sm text-white/60 line-through mb-1">{inr(deal.originalPrice)}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Rating & Time Info */}
+              <div className="px-5 pt-4 pb-2 border-b border-border/40">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-0.5">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                      ))}
+                    </div>
+                    <span className="font-semibold text-foreground ml-1">{deal.rating}</span>
+                    <span className="text-muted-foreground">({deal.reviews})</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-muted-foreground">
+                    <Clock className="h-3.5 w-3.5" />
+                    <span className="text-xs font-medium">{deal.duration}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Features */}
+              <div className="flex flex-col flex-1 p-5 gap-4">
+                <ul className="space-y-2.5">
+                  {deal.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-sm text-foreground">
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-auto pt-2">
+                  <Link to={`/booking?bathrooms=${deal.bathrooms}`}>
+                    <Button className="w-full bg-green-600 hover:bg-green-700" size="sm">
+                      Book Deal <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                     </Button>
                   </Link>
                 </div>
@@ -241,8 +463,6 @@ export default function ServicesPage() {
           ))}
         </div>
       </section>
-
-      {/* ── Mini services grid ── */}
       <section className="mx-auto max-w-7xl w-full px-6 pb-20">
         <div className="mb-8">
           <h2 className="text-2xl font-bold">Mini Add-on Services</h2>
