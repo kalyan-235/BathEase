@@ -9,14 +9,40 @@ const app = express();
 connectDB();
 
 // Middleware
-// Allow any localhost port (dev can run on 3000, 3001, 5173, 8080, etc.)
+// Allow localhost (dev) + all deployed frontends (prod)
+const ALLOWED_ORIGINS = [
+  // Local development
+  /^http:\/\/localhost(:\d+)?$/,
+
+  // Vercel — all three BathEase domains
+  'https://bath-ease.vercel.app',
+  'https://bath-ease-git-main-kalyan-235s-projects.vercel.app',
+  'https://bath-ease-ar34bz2zv-kalyan-235s-projects.vercel.app',
+
+  // Generic pattern fallbacks
+  /^https?:\/\/.*\.vercel\.app$/,
+  /^https?:\/\/.*\.netlify\.app$/,
+  /^https?:\/\/.*\.onrender\.com$/,
+  /^https?:\/\/.*\.pages\.dev$/,
+];
+
+// Also honour an explicit FRONTEND_URL env var
+if (process.env.FRONTEND_URL) {
+  ALLOWED_ORIGINS.push(process.env.FRONTEND_URL);
+}
+
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || /^http:\/\/localhost(:\d+)?$/.test(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
+    // Allow non-browser requests (Postman, mobile apps, server-to-server)
+    if (!origin) return callback(null, true);
+
+    const allowed = ALLOWED_ORIGINS.some((o) =>
+      typeof o === 'string' ? o === origin : o.test(origin)
+    );
+
+    if (allowed) return callback(null, true);
+    console.warn(`CORS blocked: ${origin}`);
+    callback(new Error(`CORS: origin ${origin} not allowed`));
   },
   credentials: true,
 }));
