@@ -50,10 +50,13 @@ export default function AuthPage() {
     if (!rn || !re || !rp) return toast.error('Fill all fields');
     setRegisterLoading(true);
     try {
-      const user = await api.register(rn, re, rp);
-      session.save(user);
-      toast.success(`Account created — welcome ${user.name.split(' ')[0]}`);
-      navigate('/dashboard');
+      await api.register(rn, re, rp);
+      toast.success('Account created! Please sign in to continue.');
+      // Pre-fill login email and switch to login tab
+      setLe(re);
+      setLp('');
+      setRn(''); setRe(''); setRp('');
+      setActiveTab('login');
     } catch (e) {
       toast.error(e.message);
     } finally {
