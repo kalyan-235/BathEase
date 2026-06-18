@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Nav }      from '@/components/Nav';
 import { Footer }   from '@/components/Footer';
 import { Card }     from '@/components/card';
@@ -16,10 +16,17 @@ import { Minus, Plus, Tag, CalendarDays } from 'lucide-react';
 
 export default function BookingPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const user = session.getUser();
 
-  const [bathrooms, setBathrooms] = useState(1);
-  const [minis, setMinis]         = useState([]);
+  // Read URL params: ?bathrooms=3&mini=exhaust,mirror
+  const initBathrooms = Math.min(10, Math.max(1, parseInt(searchParams.get('bathrooms') || '1', 10)));
+  const initMinis     = searchParams.get('mini')
+    ? searchParams.get('mini').split(',').filter((id) => MINI_SERVICES.some((m) => m.id === id))
+    : [];
+
+  const [bathrooms, setBathrooms] = useState(initBathrooms);
+  const [minis, setMinis]         = useState(initMinis);
   const [coupon, setCoupon]       = useState('');
   const [date, setDate]           = useState(() => new Date(Date.now() + 86400000).toISOString().slice(0, 10));
   const [slot, setSlot]           = useState(TIME_SLOTS[1]);
@@ -70,7 +77,7 @@ export default function BookingPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Nav />
-      <section className="mx-auto max-w-7xl px-6 py-12 grid lg:grid-cols-[1fr_380px] gap-8">
+      <section className="mx-auto max-w-7xl w-full px-4 sm:px-6 py-8 sm:py-12 grid lg:grid-cols-[1fr_380px] gap-6 sm:gap-8 items-start">
 
         {/* ── Left col ── */}
         <div className="space-y-8">
@@ -177,8 +184,8 @@ export default function BookingPage() {
           </Card>
         </div>
 
-        {/* ── Summary sidebar ── */}
-        <aside className="lg:sticky lg:top-24 self-start">
+        {/* ── Summary sidebar — shows below form on mobile, sticky on desktop ── */}
+        <aside className="w-full lg:sticky lg:top-24 self-start order-first lg:order-last">
           <Card className="p-6 bg-gradient-card shadow-soft">
             <h3 className="font-semibold">Order summary</h3>
             <div className="mt-4 space-y-2 text-sm">

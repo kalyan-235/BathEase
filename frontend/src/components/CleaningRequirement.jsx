@@ -11,32 +11,26 @@ const items = [
 
 export function CleaningRequirement() {
   return (
-    <div className="w-full rounded-2xl dark:bg-card shadow-sm border border-border/60">
+    <div className="w-full rounded-2xl bg-card shadow-sm border border-border/60">
       {/* Header */}
-      <div className="px-10 pt-7 pb-6">
-        <h2 className="text-lg font-semibold text-foreground whitespace-nowrap">
+      <div className="px-4 sm:px-8 pt-6 pb-4">
+        <h2 className="text-base sm:text-lg font-semibold text-foreground">
           Cleaning Requirement
         </h2>
       </div>
 
-      {/* Grid — 4 columns × 2 rows, images smaller & centered */}
-      <div className="grid grid-cols-4 gap-6 px-10 pb-8">
+      {/* Grid — 4 cols on md+, 2 cols on mobile */}
+      <div className="grid grid-cols-4 gap-3 sm:gap-5 px-4 sm:px-8 pb-6">
         {items.map((item) => (
-          <div
-            key={item.id}
-            className="flex flex-col items-center gap-2"
-          >
-            {/* Fixed small square image */}
-            <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-50 dark:bg-muted/30 flex items-center justify-center border border-border/30">
+          <div key={item.id} className="flex flex-col items-center gap-2">
+            <div className="w-full aspect-square rounded-xl overflow-hidden bg-gray-50 dark:bg-muted/30 border border-border/30">
               <img
                 src={item.image}
                 alt={item.label}
                 className="w-full h-full object-cover"
               />
             </div>
-
-            {/* Label */}
-            <span className="text-xs font-medium text-foreground text-center leading-snug">
+            <span className="text-[10px] sm:text-xs font-medium text-foreground text-center leading-snug">
               {item.label}
             </span>
           </div>

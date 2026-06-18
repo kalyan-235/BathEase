@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './styles/index.css';
 
-import Home       from './pages/index.jsx';
+import Home       from './pages/home.jsx';
 import Services   from './pages/services.jsx';
 import Booking    from './pages/booking.jsx';
 import Dashboard  from './pages/dashboard.jsx';

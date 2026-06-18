@@ -3,7 +3,7 @@ import { Nav }    from '@/components/Nav';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/button';
 import { ViewDetails } from '@/components/ViewDetails';
-import { MINI_SERVICES, inr } from '@/lib/bathease';
+import { MINI_SERVICES, BATHROOM_PACKAGES, VALUE_DEALS, inr } from '@/lib/bathease';
 import { Bath, CheckCircle2, Star, Zap, Shield, Clock, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -40,7 +40,7 @@ function HeroCarousel() {
   const next = () => goTo((current + 1) % carouselImages.length);
 
   return (
-    <div className="relative w-full overflow-hidden" style={{ height: '390px' }}>
+    <div className="relative w-full overflow-hidden" style={{ height: 'clamp(200px, 40vw, 390px)' }}>
 
       {/* Images */}
       {carouselImages.map((img, i) => (
@@ -94,152 +94,10 @@ function HeroCarousel() {
 }
 
 // ── Bathroom packages ─────────────────────────────────────────────────────────
-const bathroomPackages = [
-  {
-    id: 1,
-    title: 'Single Bathroom',
-    bathrooms: 1,
-    price: 499,
-    originalPrice: null,
-    badge: null,
-    image: '/img6.png',
-    rating: 4.9,
-    reviews: 1240,
-    duration: '1 hour',
-    features: ['Full scrub & descale', 'Tile cleaning', 'Mirror polish', 'Sanitization'],
-  },
-  {
-    id: 2,
-    title: 'Double Bathroom',
-    bathrooms: 2,
-    price: 898,
-    originalPrice: 998,
-    badge: '10% OFF',
-    image: '/img6.png',
-    rating: 4.9,
-    reviews: 950,
-    duration: '1.5 hours',
-    features: ['Full scrub & descale', 'Tile cleaning', 'Mirror polish', 'Sanitization'],
-  },
-  {
-    id: 3,
-    title: 'Triple Bathroom',
-    bathrooms: 3,
-    price: 1197,
-    originalPrice: 1497,
-    badge: '20% OFF',
-    image: '/img6.png',
-    rating: 4.8,
-    reviews: 820,
-    duration: '2 hours',
-    features: ['Full scrub & descale', 'Tile cleaning', 'Mirror polish', 'Sanitization'],
-  },
-  {
-    id: 4,
-    title: 'Four Bathrooms',
-    bathrooms: 4,
-    price: 1596,
-    originalPrice: 1996,
-    badge: '20% OFF',
-    image: '/img6.png',
-    rating: 4.8,
-    reviews: 680,
-    duration: '2.5 hours',
-    features: ['Full scrub & descale', 'Tile cleaning', 'Mirror polish', 'Sanitization'],
-  },
-  {
-    id: 5,
-    title: 'Five Bathrooms',
-    bathrooms: 5,
-    price: 1995,
-    originalPrice: 2495,
-    badge: 'BEST VALUE',
-    image: '/img6.png',
-    rating: 4.9,
-    reviews: 1100,
-    duration: '3 hours',
-    features: ['Full scrub & descale', 'Tile cleaning', 'Mirror polish', 'Sanitization'],
-  },
-];
+const bathroomPackages = BATHROOM_PACKAGES;
 
 // ── Value Deals (Combinations) ────────────────────────────────────────────────
-const valueDeals = [
-  {
-    id: 1,
-    title: 'Single + Exhaust Fan',
-    bathrooms: 1,
-    basePrice: 499,
-    addonPrice: 149,
-    totalPrice: 599,
-    originalPrice: 699,
-    badge: 'SAVE ₹100',
-    image: '/exhaust_fan.jpeg',
-    rating: 4.9,
-    reviews: 890,
-    duration: '1.5 hours',
-    features: ['Full scrub & descale', 'Tile cleaning', 'Mirror polish', 'Exhaust fan cleaning'],
-  },
-  {
-    id: 2,
-    title: 'Single + Washbasin',
-    bathrooms: 1,
-    basePrice: 499,
-    addonPrice: 199,
-    totalPrice: 649,
-    originalPrice: 798,
-    badge: 'SAVE ₹149',
-    image: '/washbasin1.jpeg',
-    rating: 4.9,
-    reviews: 756,
-    duration: '1.5 hours',
-    features: ['Full scrub & descale', 'Tile cleaning', 'Washbasin upgrade', 'Sanitization'],
-  },
-  {
-    id: 3,
-    title: 'Double + Floor Finishing',
-    bathrooms: 2,
-    basePrice: 898,
-    addonPrice: 250,
-    totalPrice: 1099,
-    originalPrice: 1298,
-    badge: 'SAVE ₹199',
-    image: '/tile_cleaning.jpeg',
-    rating: 4.8,
-    reviews: 614,
-    duration: '2 hours',
-    features: ['Everything in Double', 'Premium floor finishing', 'Grout protection', 'Sanitization'],
-  },
-  {
-    id: 4,
-    title: 'Double + Ceilling Fan',
-    bathrooms: 2,
-    basePrice: 898,
-    addonPrice: 299,
-    totalPrice: 1149,
-    originalPrice: 1447,
-    badge: 'SAVE ₹298',
-    image: '/bathroom_ceillingfan.jpeg',
-    rating: 4.9,
-    reviews: 502,
-    duration: '2.25 hours',
-    features: ['Everything in Double', 'Exhaust fan cleaning', 'Ventilation upgrade', 'Full sanitization'],
-  },
-  {
-    id: 5,
-    title: 'Triple + Premium Package',
-    bathrooms: 3,
-    basePrice: 1197,
-    addonPrice: 399,
-    totalPrice: 1549,
-    originalPrice: 1997,
-    badge: 'SAVE ₹448',
-    image: '/img6.png',
-    rating: 4.8,
-    reviews: 441,
-    duration: '2.5 hours',
-    features: ['Everything in Triple', 'Premium floor coating', 'Fan cleaning', 'Wall polishing'],
-  },
-];
+const valueDeals = VALUE_DEALS;
 
 // ── Why choose us ─────────────────────────────────────────────────────────────
 const highlights = [
@@ -260,8 +118,8 @@ export default function ServicesPage() {
       <HeroCarousel />
 
       {/* ── Why us ── */}
-      <section className="mx-auto max-w-7xl w-full px-6 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <section className="mx-auto max-w-7xl w-full px-4 sm:px-6 py-8 sm:py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {highlights.map((h) => {
             const Icon = h.icon;
             return (
@@ -280,17 +138,15 @@ export default function ServicesPage() {
       </section>
 
       {/* ── Bathroom Packages — horizontal scroll ── */}
-      <section className="mx-auto max-w-7xl w-full px-6 pb-16">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold">Bathroom Deep Clean Packages</h2>
+      <section className="mx-auto max-w-7xl w-full px-4 sm:px-6 pb-12 sm:pb-16">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold">Bathroom Deep Clean Packages</h2>
         </div>
-
-        {/* Scrollable row */}
-        <div className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-border">
+        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-thin scrollbar-thumb-border">
           {bathroomPackages.map((pkg, i) => (
             <div
               key={pkg.id}
-              className="snap-start shrink-0 w-64 rounded-3xl border border-border/60 bg-card shadow-soft flex flex-col overflow-hidden hover:shadow-md transition-shadow"
+              className="snap-start shrink-0 w-[72vw] max-w-[256px] sm:w-64 rounded-3xl border border-border/60 bg-card shadow-soft flex flex-col overflow-hidden hover:shadow-md transition-shadow"
             >
               {/* Card top with image background */}
               <div 
@@ -373,18 +229,16 @@ export default function ServicesPage() {
       </section>
 
       {/* ── Value Deals — Combination Packages ── */}
-      <section className="mx-auto max-w-7xl w-full px-6 pb-16">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold">Value Deals</h2>
-          <p className="text-muted-foreground mt-1">Get more with bundle packages. Save up to ₹500 when you combine services.</p>
+      <section className="mx-auto max-w-7xl w-full px-4 sm:px-6 pb-12 sm:pb-16">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold">Value Deals</h2>
+          <p className="text-muted-foreground mt-1 text-sm">Get more with bundle packages. Save up to ₹500 when you combine services.</p>
         </div>
-
-        {/* Scrollable row */}
-        <div className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-border">
+        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-thin scrollbar-thumb-border">
           {valueDeals.map((deal, i) => (
             <div
               key={deal.id}
-              className="snap-start shrink-0 w-64 rounded-3xl border border-border/60 bg-card shadow-soft flex flex-col overflow-hidden hover:shadow-md transition-shadow"
+              className="snap-start shrink-0 w-[72vw] max-w-[256px] sm:w-64 rounded-3xl border border-border/60 bg-card shadow-soft flex flex-col overflow-hidden hover:shadow-md transition-shadow"
             >
               {/* Card top with image background */}
               <div 
@@ -451,10 +305,18 @@ export default function ServicesPage() {
                   ))}
                 </ul>
 
-                <div className="mt-auto pt-2">
-                  <Link to={`/booking?bathrooms=${deal.bathrooms}`}>
+                <div className="mt-auto pt-2 flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    size="sm"
+                    onClick={() => setSelectedService(deal)}
+                  >
+                    View Details
+                  </Button>
+                  <Link to={`/booking?bathrooms=${deal.bathrooms}`} className="flex-1">
                     <Button className="w-full bg-green-600 hover:bg-green-700" size="sm">
-                      Book Deal <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                      Book <ArrowRight className="ml-1 h-3.5 w-3.5" />
                     </Button>
                   </Link>
                 </div>
@@ -463,20 +325,20 @@ export default function ServicesPage() {
           ))}
         </div>
       </section>
-      <section className="mx-auto max-w-7xl w-full px-6 pb-20">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold">Mini Add-on Services</h2>
+      <section className="mx-auto max-w-7xl w-full px-4 sm:px-6 pb-16 sm:pb-20">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold">Mini Add-on Services</h2>
           <p className="text-muted-foreground mt-1">
             Add to any booking. Bundle with bathroom clean → get <span className="text-success font-semibold">₹100 off</span>.
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {MINI_SERVICES.map((s) => {
             return (
               <div key={s.id}
                 className="group rounded-2xl border border-border/60 bg-card p-5 flex flex-col gap-3 hover:shadow-soft hover:-translate-y-0.5 transition-all">
-                <div className="grid h-11 w-11 place-items-center rounded-xl bg-primary/10 text-primary overflow-hidden">
+                <div className="w-full h-32 rounded-xl overflow-hidden">
                   <img src={s.image} alt={s.name} className="h-full w-full object-cover" />
                 </div>
                 <div className="flex-1">
@@ -485,9 +347,14 @@ export default function ServicesPage() {
                 </div>
                 <div className="flex items-center justify-between pt-1 border-t border-border/50">
                   <span className="text-base font-bold text-primary">{inr(s.price)}</span>
-                  <Link to="/booking">
-                    <Button size="sm" variant="outline" className="h-7 text-xs px-3">Add</Button>
-                  </Link>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 text-xs px-3"
+                    onClick={() => setSelectedService(s)}
+                  >
+                    View Details
+                  </Button>
                 </div>
               </div>
             );
@@ -495,8 +362,15 @@ export default function ServicesPage() {
         </div>
       </section>
 
+      {/* ── View Details Modal ── */}
+      <ViewDetails
+        isOpen={!!selectedService}
+        onClose={() => setSelectedService(null)}
+        service={selectedService}
+      />
+
       {/* ── Bottom CTA ── */}
-      <section className="bg-gradient-hero text-primary-foreground py-16 px-6 text-center">
+      <section className="bg-gradient-hero text-primary-foreground py-12 sm:py-16 px-4 sm:px-6 text-center">
         <h2 className="text-3xl font-bold">Ready for a sparkling clean bathroom?</h2>
         <p className="mt-3 text-primary-foreground/80">Book in under a minute. Flexible slots. Cancel anytime.</p>
         <Link to="/booking">

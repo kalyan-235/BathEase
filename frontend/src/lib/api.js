@@ -49,6 +49,9 @@ export const api = {
 
   // ─── Users ──────────────────────────────────────────────────────────────
 
+  // GET /api/users  (admin only)
+  allUsers: () => request("GET", "/users"),
+
   // PUT /api/users/profile
   updateProfile: (patch) => request("PUT", "/users/profile", patch),
 

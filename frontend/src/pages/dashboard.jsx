@@ -52,7 +52,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen flex flex-col">
       <Nav />
-      <section className="mx-auto max-w-6xl w-full px-6 py-12">
+      <section className="mx-auto max-w-6xl w-full px-4 sm:px-6 py-8 sm:py-12">
         <ProfileCard onUpdate={fetchBookings} />
 
         <div className="mt-10 flex items-end justify-between flex-wrap gap-3">
@@ -122,7 +122,7 @@ function ProfileCard({ onUpdate }) {
           )}
           <div className="text-[11px] text-center mt-2 text-muted-foreground">Change photo</div>
         </label>
-        <div className="flex-1 min-w-[260px] grid sm:grid-cols-2 gap-3">
+        <div className="flex-1 min-w-0 grid sm:grid-cols-2 gap-3">
           <Field label="Name"><Input value={name} onChange={(e) => setName(e.target.value)} /></Field>
           <Field label="Email"><Input value={user?.email ?? ''} disabled /></Field>
           <Field label="WhatsApp"><Input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+91..." /></Field>

@@ -1,14 +1,21 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Moon, Sun, Bath, Menu, X, LogOut } from 'lucide-react';
+import { Moon, Sun, Bath, LogOut, Home, Wrench, CalendarCheck, BookOpen, ShieldCheck } from 'lucide-react';
 import { theme } from '@/lib/bathease';
 import { session } from '@/lib/api';
 import { Button } from '@/components/button';
 import { toast } from 'sonner';
 
+// Bottom tab bar links (mobile only) — max 5 items
+const TAB_LINKS = [
+  { to: '/',          label: 'Home',       icon: Home },
+  { to: '/services',  label: 'Services',   icon: Wrench },
+  { to: '/booking',   label: 'Book',       icon: CalendarCheck },
+  { to: '/dashboard', label: 'My Bookings',icon: BookOpen },
+];
+
 export function Nav() {
   const [currentTheme, setCurrentTheme] = useState('light');
-  const [open, setOpen]   = useState(false);
   const [user, setUser]   = useState(null);
   const navigate          = useNavigate();
   const location          = useLocation();
@@ -18,7 +25,7 @@ export function Nav() {
     setCurrentTheme(t);
     document.documentElement.classList.toggle('dark', t === 'dark');
     setUser(session.getUser());
-  }, [location.pathname]); // refresh on route change so login/logout reflects immediately
+  }, [location.pathname]);
 
   useEffect(() => {
     const onStorage = () => setUser(session.getUser());
@@ -33,7 +40,7 @@ export function Nav() {
     document.documentElement.classList.toggle('dark', next === 'dark');
   };
 
-  const links = [
+  const desktopLinks = [
     { to: '/',          label: 'Home' },
     { to: '/services',  label: 'Services' },
     { to: '/booking',   label: 'Book' },
@@ -51,71 +58,91 @@ export function Nav() {
   const isActive = (to) =>
     to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
 
+  // Build tab items — add Admin tab if admin user
+  const tabLinks = [
+    ...TAB_LINKS,
+    ...(user?.role === 'admin' ? [{ to: '/admin', label: 'Admin', icon: ShieldCheck }] : []),
+  ];
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+    <>
+      {/* ── TOP NAV (desktop + mobile header) ── */}
+      <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
 
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 font-bold text-lg">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-hero text-primary-foreground shadow-soft">
-            <Bath className="h-5 w-5" />
-          </span>
-          <span>BathEase</span>
-        </Link>
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2 font-bold text-lg shrink-0">
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-hero text-primary-foreground shadow-soft">
+              <Bath className="h-5 w-5" />
+            </span>
+            <span>BathEase</span>
+          </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1">
-          {links.map((l) => (
-            <Link key={l.to} to={l.to}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-                isActive(l.to)
-                  ? 'text-foreground bg-accent/60 font-semibold'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-accent/40'
-              }`}>
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Right actions */}
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
-            {currentTheme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </Button>
-          {user ? (
-            <>
-              <span className="hidden sm:inline text-sm text-muted-foreground">
-                Hi, {user.name?.split(' ')[0]}
-              </span>
-              <Button variant="outline" size="sm" onClick={logout}>
-                <LogOut className="h-4 w-4 mr-1" />Sign out
-              </Button>
-            </>
-          ) : (
-            <Link to="/auth">
-              <Button size="sm" className="shadow-soft">Sign in</Button>
-            </Link>
-          )}
-          <Button variant="ghost" size="icon" className="md:hidden"
-            onClick={() => setOpen((o) => !o)} aria-label="Menu">
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
-        </div>
-      </div>
-
-      {/* Mobile menu */}
-      {open && (
-        <div className="md:hidden border-t border-border/60 bg-background">
-          <div className="flex flex-col p-2">
-            {links.map((l) => (
-              <Link key={l.to} to={l.to} onClick={() => setOpen(false)}
-                className="px-3 py-2 rounded-md text-sm hover:bg-accent/50">
+          {/* Desktop nav links */}
+          <nav className="hidden md:flex items-center gap-1">
+            {desktopLinks.map((l) => (
+              <Link key={l.to} to={l.to}
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                  isActive(l.to)
+                    ? 'text-foreground bg-accent/60 font-semibold'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent/40'
+                }`}>
                 {l.label}
               </Link>
             ))}
+          </nav>
+
+          {/* Right actions */}
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
+              {currentTheme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+            {user ? (
+              <>
+                <span className="hidden sm:inline text-sm text-muted-foreground">
+                  Hi, {user.name?.split(' ')[0]}
+                </span>
+                <Button variant="outline" size="sm" onClick={logout}>
+                  <LogOut className="h-4 w-4 mr-1" /> Sign out
+                </Button>
+              </>
+            ) : (
+              <Link to="/auth">
+                <Button size="sm" className="shadow-soft">Sign in</Button>
+              </Link>
+            )}
           </div>
         </div>
-      )}
-    </header>
+      </header>
+
+      {/* ── BOTTOM TAB BAR (mobile only) ── */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl border-t border-border/60 safe-bottom">
+        <div className="flex items-stretch h-16">
+          {tabLinks.map(({ to, label, icon: Icon }) => {
+            const active = isActive(to);
+            return (
+              <Link
+                key={to}
+                to={to}
+                className={`flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors ${
+                  active ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                <div className={`grid h-8 w-8 place-items-center rounded-xl transition-all ${
+                  active ? 'bg-primary/10' : ''
+                }`}>
+                  <Icon className={`transition-all ${active ? 'h-5 w-5' : 'h-5 w-5'}`} strokeWidth={active ? 2.5 : 1.8} />
+                </div>
+                <span className={`text-[10px] font-medium leading-none ${active ? 'text-primary' : 'text-muted-foreground'}`}>
+                  {label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* Spacer — only needed on mobile to push content below the bottom tab bar height is handled by footer pb */}
+    </>
   );
 }
