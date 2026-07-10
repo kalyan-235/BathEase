@@ -1,4 +1,6 @@
-const items = [
+import { useContent } from '@/hooks/useContent';
+
+const DEFAULT_ITEMS = [
   { id: 1, image: '/floor_scrubber.jpeg',     label: 'Floor Scrubber' },
   { id: 2, image: '/vacuum_cleaner.jpeg',     label: 'Vacuum Clean' },
   { id: 3, image: '/wiper.jpeg',              label: 'Wiper' },
@@ -10,6 +12,8 @@ const items = [
 ];
 
 export function CleaningRequirement() {
+  const { data: items } = useContent('cleaningRequirements', DEFAULT_ITEMS);
+
   return (
     <div className="w-full rounded-2xl bg-card shadow-sm border border-border/60">
       {/* Header */}
@@ -19,7 +23,7 @@ export function CleaningRequirement() {
         </h2>
       </div>
 
-      {/* Grid — 4 cols on md+, 2 cols on mobile */}
+      {/* Grid — 4 cols on md+, responsive on mobile */}
       <div className="grid grid-cols-4 gap-3 sm:gap-5 px-4 sm:px-8 pb-6">
         {items.map((item) => (
           <div key={item.id} className="flex flex-col items-center gap-2">

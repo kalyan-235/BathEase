@@ -6,6 +6,7 @@ import { ViewDetails } from '@/components/ViewDetails';
 import { MINI_SERVICES, BATHROOM_PACKAGES, VALUE_DEALS, inr } from '@/lib/bathease';
 import { Bath, CheckCircle2, Star, Zap, Shield, Clock, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useContent } from '@/hooks/useContent';
 
 const carouselImages = [
   { src: '/img4.png', alt: 'Exhaust and mirror cleaning' },
@@ -93,12 +94,6 @@ function HeroCarousel() {
   );
 }
 
-// ── Bathroom packages ─────────────────────────────────────────────────────────
-const bathroomPackages = BATHROOM_PACKAGES;
-
-// ── Value Deals (Combinations) ────────────────────────────────────────────────
-const valueDeals = VALUE_DEALS;
-
 // ── Why choose us ─────────────────────────────────────────────────────────────
 const highlights = [
   { icon: Shield,  title: 'Insured Professionals', desc: 'All cleaners are background-verified & insured.' },
@@ -109,6 +104,11 @@ const highlights = [
 
 export default function ServicesPage() {
   const [selectedService, setSelectedService] = useState(null);
+
+  // Live content from backend — falls back to static defaults if not saved yet
+  const { data: bathroomPackages } = useContent('packages',    BATHROOM_PACKAGES);
+  const { data: valueDeals }       = useContent('valueDeals',  VALUE_DEALS);
+  const { data: miniServices }     = useContent('miniServices', MINI_SERVICES);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -334,7 +334,7 @@ export default function ServicesPage() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {MINI_SERVICES.map((s) => {
+          {miniServices.map((s) => {
             return (
               <div key={s.id}
                 className="group rounded-2xl border border-border/60 bg-card p-5 flex flex-col gap-3 hover:shadow-soft hover:-translate-y-0.5 transition-all">

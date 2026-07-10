@@ -7,6 +7,7 @@ import { SelectService }       from '@/components/SelectService';
 import { CleaningRequirement } from '@/components/CleaningRequirement';
 import { ViewDetails }         from '@/components/ViewDetails';
 import { MINI_SERVICES, BATHROOM_PACKAGES, VALUE_DEALS, inr } from '@/lib/bathease';
+import { useContent } from '@/hooks/useContent';
 import {
   Sparkles, ShieldCheck, Clock, Star, ArrowRight,
   CheckCircle2, Bath, Zap, Shield, Users, Award, ChevronRight,
@@ -28,6 +29,11 @@ const stats = [
 
 export default function Home() {
   const [selectedService, setSelectedService] = useState(null);
+
+  // Live content from backend — falls back to static defaults if not saved yet
+  const { data: bathroomPackages } = useContent('packages',     BATHROOM_PACKAGES);
+  const { data: valueDeals }       = useContent('valueDeals',   VALUE_DEALS);
+  const { data: miniServices }     = useContent('miniServices',  MINI_SERVICES);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -118,7 +124,7 @@ export default function Home() {
 
           {/* Horizontal scroll — cards sized relative to viewport on mobile */}
           <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-thin scrollbar-thumb-border">
-            {BATHROOM_PACKAGES.map((pkg) => (
+            {bathroomPackages.map((pkg) => (
               <div
                 key={pkg.id}
                 className="snap-start shrink-0 w-[72vw] max-w-[260px] sm:w-60 rounded-3xl border border-border/60 bg-card shadow-sm flex flex-col overflow-hidden hover:shadow-md transition-shadow"
@@ -185,7 +191,7 @@ export default function Home() {
         </div>
 
         <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-thin scrollbar-thumb-border">
-          {VALUE_DEALS.map((deal) => (
+          {valueDeals.map((deal) => (
             <div
               key={deal.id}
               className="snap-start shrink-0 w-[72vw] max-w-[260px] sm:w-60 rounded-3xl border border-border/60 bg-card shadow-sm flex flex-col overflow-hidden hover:shadow-md transition-shadow"
@@ -306,7 +312,7 @@ export default function Home() {
           </Link>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-          {MINI_SERVICES.slice(0, 4).map((s) => (
+          {miniServices.slice(0, 4).map((s) => (
             <div
               key={s.id}
               className="rounded-2xl border border-border/60 bg-card flex flex-col overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all"

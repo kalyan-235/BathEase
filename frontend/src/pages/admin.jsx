@@ -7,6 +7,8 @@ import { AdminDashboard }    from '@/components/admin/AdminDashboard';
 import { LoginUsers }        from '@/components/admin/LoginUsers';
 import { BookingUsers }      from '@/components/admin/BookingUsers';
 import { ChatWithCustomers } from '@/components/admin/ChatWithCustomers';
+import { ContentManager }    from '@/components/admin/ContentManager';
+import { useAdminNotifications } from '@/hooks/useAdminNotifications';
 import { useEffect, useState } from 'react';
 import { api, session } from '@/lib/api';
 import { toast } from 'sonner';
@@ -16,6 +18,17 @@ export default function AdminPage() {
   const [activePage, setActivePage] = useState('dashboard');
   const [bookings,   setBookings]   = useState([]);
   const [loading,    setLoading]    = useState(true);
+
+  // ── Notification system ──────────────────────────────────────────────────
+  const { counts, total, markSeen } = useAdminNotifications();
+
+  // When admin switches tabs — mark that section as seen
+  const handleTabChange = (page) => {
+    setActivePage(page);
+    if (page === 'bookings') markSeen('bookings');
+    if (page === 'users')    markSeen('users');
+    if (page === 'chat')     markSeen('chat');
+  };
 
   const fetchBookings = async () => {
     try {
@@ -71,8 +84,13 @@ export default function AdminPage() {
     <div className="min-h-screen flex flex-col bg-background">
       <Nav />
       <div className="flex flex-1">
-        {/* Sidebar */}
-        <AdminSidebar active={activePage} onChange={setActivePage} />
+        {/* Sidebar — receives notification counts */}
+        <AdminSidebar
+          active={activePage}
+          onChange={handleTabChange}
+          counts={counts}
+          total={total}
+        />
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto">
@@ -87,6 +105,9 @@ export default function AdminPage() {
           )}
           {activePage === 'chat' && (
             <ChatWithCustomers />
+          )}
+          {activePage === 'content' && (
+            <ContentManager />
           )}
         </main>
       </div>

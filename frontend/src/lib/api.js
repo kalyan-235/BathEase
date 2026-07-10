@@ -55,7 +55,13 @@ export const api = {
   // PUT /api/users/profile
   updateProfile: (patch) => request("PUT", "/users/profile", patch),
 
-  // ─── Bookings ───────────────────────────────────────────────────────────
+  // ─── Content (admin managed) ────────────────────────────────────────────
+
+  // GET /api/content/:type  — public
+  getContent: (type) => request("GET", `/content/${type}`),
+
+  // PUT /api/content/:type  — admin only
+  saveContent: (type, items) => request("PUT", `/content/${type}`, { items }),
 
   // POST /api/bookings
   createBooking: (bookingData) => request("POST", "/bookings", bookingData),

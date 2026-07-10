@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Booking = require('../models/Booking');
 const { protect, adminOnly } = require('../middleware/auth');
+const { sendAdminWhatsApp } = require('../config/whatsapp');
 
 // POST /api/bookings — create booking (auth required)
 router.post('/', protect, async (req, res) => {
@@ -35,6 +36,9 @@ router.post('/', protect, async (req, res) => {
       status: 'confirmed',
       price,
     });
+
+    // Notify admin on WhatsApp (non-blocking — won't fail the booking)
+    sendAdminWhatsApp(booking).catch(() => {});
 
     res.status(201).json(booking);
   } catch (err) {
