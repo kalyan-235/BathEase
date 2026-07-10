@@ -4,8 +4,6 @@ import { Footer }   from '@/components/Footer';
 import { Card }     from '@/components/card';
 import { Button }   from '@/components/button';
 import { Badge }    from '@/components/badge';
-import { Input }    from '@/components/input';
-import { Textarea } from '@/components/textarea';
 import { useEffect, useState } from 'react';
 import { inr, MINI_SERVICES, downloadInvoice, whatsappLink } from '@/lib/bathease';
 import { api, session } from '@/lib/api';
@@ -53,9 +51,7 @@ export default function Dashboard() {
     <div className="min-h-screen flex flex-col">
       <Nav />
       <section className="mx-auto max-w-6xl w-full px-4 sm:px-6 py-8 sm:py-12">
-        <ProfileCard onUpdate={fetchBookings} />
-
-        <div className="mt-10 flex items-end justify-between flex-wrap gap-3">
+        <div className="flex items-end justify-between flex-wrap gap-3 mb-6">
           <div>
             <h2 className="text-2xl font-bold">Your bookings</h2>
             <p className="text-sm text-muted-foreground">Track status, download invoices, leave reviews.</p>
@@ -74,76 +70,6 @@ export default function Dashboard() {
         )}
       </section>
       <Footer />
-    </div>
-  );
-}
-
-function ProfileCard({ onUpdate }) {
-  const user = session.getUser();
-  const [name, setName]         = useState(user?.name ?? '');
-  const [whatsapp, setWhatsapp] = useState(user?.whatsapp ?? '');
-  const [address, setAddress]   = useState(user?.address ?? '');
-  const [location, setLocation] = useState(user?.location ?? '');
-  const [img, setImg]           = useState(user?.profileImage ?? '');
-  const [saving, setSaving]     = useState(false);
-
-  const onFile = (f) => {
-    if (!f) return;
-    const reader = new FileReader();
-    reader.onload = () => setImg(String(reader.result));
-    reader.readAsDataURL(f);
-  };
-
-  const save = async () => {
-    setSaving(true);
-    try {
-      const updated = await api.updateProfile({ name, whatsapp, address, location, profileImage: img });
-      session.updateUser(updated);
-      toast.success('Profile updated');
-      onUpdate();
-    } catch (e) {
-      toast.error(e.message);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <Card className="p-6 bg-gradient-card">
-      <div className="flex flex-wrap gap-6 items-start">
-        <label className="cursor-pointer">
-          <input type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
-          {img ? (
-            <img src={img} alt="" className="h-24 w-24 rounded-2xl object-cover shadow-soft" />
-          ) : (
-            <div className="h-24 w-24 rounded-2xl bg-gradient-hero text-primary-foreground grid place-items-center text-3xl font-bold shadow-soft">
-              {user?.name?.[0]?.toUpperCase()}
-            </div>
-          )}
-          <div className="text-[11px] text-center mt-2 text-muted-foreground">Change photo</div>
-        </label>
-        <div className="flex-1 min-w-0 grid sm:grid-cols-2 gap-3">
-          <Field label="Name"><Input value={name} onChange={(e) => setName(e.target.value)} /></Field>
-          <Field label="Email"><Input value={user?.email ?? ''} disabled /></Field>
-          <Field label="WhatsApp"><Input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+91..." /></Field>
-          <Field label="City / Location"><Input value={location} onChange={(e) => setLocation(e.target.value)} /></Field>
-          <div className="sm:col-span-2">
-            <Field label="Address"><Textarea value={address} onChange={(e) => setAddress(e.target.value)} /></Field>
-          </div>
-        </div>
-      </div>
-      <div className="mt-4 flex justify-end">
-        <Button onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save profile'}</Button>
-      </div>
-    </Card>
-  );
-}
-
-function Field({ label, children }) {
-  return (
-    <div>
-      <label className="text-xs font-medium text-muted-foreground">{label}</label>
-      <div className="mt-1">{children}</div>
     </div>
   );
 }
