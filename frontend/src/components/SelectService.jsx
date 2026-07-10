@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 
 const services = [
-  { id: 'visit-packs',  image: '/20off.jpeg',         label: '3-visit packs',       to: '/booking' },
-  { id: 'value-deals',  image: '/combodeals.jpeg',    label: 'Value deals',         to: '/booking' },
-  { id: 'deep-clean',   image: '/toilet_sink.jpeg',   label: 'One time deep clean', to: '/booking' },
+  { id: 'visit-packs',  image: '/20off.jpeg',         label: '3-visit packs',       to: '/services' },
+  { id: 'value-deals',  image: '/combodeals.jpeg',    label: 'Value deals',         to: '/services' },
+  { id: 'deep-clean',   image: '/toilet_sink.jpeg',   label: 'One time deep clean', to: '/services' },
   { id: 'mini-services',image: '/washbasin.jpeg',     label: 'Mini services',       to: '/services' },
 ];
 
