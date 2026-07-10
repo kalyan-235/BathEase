@@ -52,6 +52,9 @@ export const api = {
   // GET /api/users  (admin only)
   allUsers: () => request("GET", "/users"),
 
+  // GET /api/users/contact  (public — admin WhatsApp & email for footer)
+  getAdminContact: () => request("GET", "/users/contact"),
+
   // PUT /api/users/profile
   updateProfile: (patch) => request("PUT", "/users/profile", patch),
 

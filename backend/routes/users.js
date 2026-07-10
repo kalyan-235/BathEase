@@ -3,6 +3,20 @@ const router = express.Router();
 const User = require('../models/User');
 const { protect, adminOnly } = require('../middleware/auth');
 
+// GET /api/users/contact  — public, returns admin contact info only
+router.get('/contact', async (req, res) => {
+  try {
+    const admin = await User.findOne({ role: 'admin' }).select('whatsapp email name');
+    res.json({
+      whatsapp: admin?.whatsapp || '',
+      email:    admin?.email    || 'support@bathease.in',
+      name:     admin?.name     || 'BathEase Support',
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/users  (admin only — list all users)
 router.get('/', protect, adminOnly, async (req, res) => {
   try {
