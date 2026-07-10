@@ -11,6 +11,8 @@ import {
   BATHROOM_PACKAGES, MINI_SERVICES, VALUE_DEALS,
 } from '@/lib/bathease';
 
+const CACHE_PREFIX = 'bathease:content:';
+
 // ── Section configs ───────────────────────────────────────────────────────────
 const SECTIONS = [
   {
@@ -235,8 +237,10 @@ function SectionPanel({ section }) {
     setSaving(true);
     try {
       await api.saveContent(key, list);
+      // Write to localStorage cache so other pages reflect changes immediately
+      try { localStorage.setItem(CACHE_PREFIX + key, JSON.stringify(list)); } catch {}
       setItems(list);
-      toast.success(`${label} saved`);
+      toast.success(`${label} saved — refresh services page to see changes`);
     } catch (e) {
       toast.error('Save failed: ' + e.message);
     } finally {
@@ -246,16 +250,20 @@ function SectionPanel({ section }) {
 
   const handleEdit = (item) => setEditing(item);
 
-  const handleSave = (updated) => {
-    const next = items.map((i) => (i.id === updated.id ? updated : i));
-    setEditing(null);
-    save(next);
-  };
-
   const handleAdd = () => {
+    // Open editor with a blank item — don't add to list yet
     const item = blankItem(fields);
     setEditing(item);
-    setItems((p) => [...p, item]);
+  };
+
+  const handleSave = (updated) => {
+    // If item already exists → update it; if new → append it
+    const exists = items.some((i) => i.id === updated.id);
+    const next = exists
+      ? items.map((i) => (i.id === updated.id ? updated : i))
+      : [...items, updated];
+    setEditing(null);
+    save(next);
   };
 
   const handleDelete = (id) => {

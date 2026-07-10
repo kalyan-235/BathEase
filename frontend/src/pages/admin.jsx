@@ -8,6 +8,7 @@ import { LoginUsers }        from '@/components/admin/LoginUsers';
 import { BookingUsers }      from '@/components/admin/BookingUsers';
 import { ChatWithCustomers } from '@/components/admin/ChatWithCustomers';
 import { ContentManager }    from '@/components/admin/ContentManager';
+import { AdminProfile }      from '@/components/admin/AdminProfile';
 import { useAdminNotifications } from '@/hooks/useAdminNotifications';
 import { useEffect, useState } from 'react';
 import { api, session } from '@/lib/api';
@@ -108,6 +109,9 @@ export default function AdminPage() {
           )}
           {activePage === 'content' && (
             <ContentManager />
+          )}
+          {activePage === 'profile' && (
+            <AdminProfile />
           )}
         </main>
       </div>

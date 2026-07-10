@@ -1,4 +1,4 @@
-import { Bell, Users, CalendarCheck, MessageCircle, LayoutDashboard, Hammer } from 'lucide-react';
+import { Bell, Users, CalendarCheck, MessageCircle, LayoutDashboard, Hammer, UserCircle } from 'lucide-react';
 
 const navItems = [
   { key: 'dashboard', label: 'Dashboard',           icon: LayoutDashboard, countKey: null },
@@ -6,6 +6,7 @@ const navItems = [
   { key: 'bookings',  label: 'Booking Users',        icon: CalendarCheck,   countKey: 'bookings' },
   { key: 'chat',      label: 'Chat with Customers',  icon: MessageCircle,   countKey: 'chat' },
   { key: 'content',   label: 'Content Manager',      icon: Hammer,          countKey: null },
+  { key: 'profile',   label: 'Admin Profile',        icon: UserCircle,      countKey: null },
 ];
 
 export function AdminSidebar({ active, onChange, counts = {}, total = 0 }) {

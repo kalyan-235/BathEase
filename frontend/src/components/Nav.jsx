@@ -1,24 +1,26 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Moon, Sun, Bath, LogOut, Home, Wrench, CalendarCheck, BookOpen, ShieldCheck } from 'lucide-react';
+import { Moon, Sun, Bath, Home, Wrench, CalendarCheck, BookOpen, ShieldCheck } from 'lucide-react';
 import { theme } from '@/lib/bathease';
 import { session } from '@/lib/api';
 import { Button } from '@/components/button';
+import { UserProfilePanel } from '@/components/UserProfilePanel';
 import { toast } from 'sonner';
 
-// Bottom tab bar links (mobile only) — max 5 items
+// Bottom tab bar links (mobile only)
 const TAB_LINKS = [
-  { to: '/',          label: 'Home',       icon: Home },
-  { to: '/services',  label: 'Services',   icon: Wrench },
-  { to: '/booking',   label: 'Book',       icon: CalendarCheck },
-  { to: '/dashboard', label: 'My Bookings',icon: BookOpen },
+  { to: '/',          label: 'Home',        icon: Home },
+  { to: '/services',  label: 'Services',    icon: Wrench },
+  { to: '/booking',   label: 'Book',        icon: CalendarCheck },
+  { to: '/dashboard', label: 'My Bookings', icon: BookOpen },
 ];
 
 export function Nav() {
   const [currentTheme, setCurrentTheme] = useState('light');
-  const [user, setUser]   = useState(null);
-  const navigate          = useNavigate();
-  const location          = useLocation();
+  const [user,         setUser]         = useState(null);
+  const [panelOpen,    setPanelOpen]    = useState(false);
+  const navigate  = useNavigate();
+  const location  = useLocation();
 
   useEffect(() => {
     const t = theme.get();
@@ -40,6 +42,14 @@ export function Nav() {
     document.documentElement.classList.toggle('dark', next === 'dark');
   };
 
+  const logout = () => {
+    session.clear();
+    setUser(null);
+    setPanelOpen(false);
+    toast.success('Signed out');
+    navigate('/');
+  };
+
   const desktopLinks = [
     { to: '/',          label: 'Home' },
     { to: '/services',  label: 'Services' },
@@ -48,25 +58,21 @@ export function Nav() {
     ...(user?.role === 'admin' ? [{ to: '/admin', label: 'Admin' }] : []),
   ];
 
-  const logout = () => {
-    session.clear();
-    setUser(null);
-    toast.success('Signed out');
-    navigate('/');
-  };
-
-  const isActive = (to) =>
-    to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
-
-  // Build tab items — add Admin tab if admin user
   const tabLinks = [
     ...TAB_LINKS,
     ...(user?.role === 'admin' ? [{ to: '/admin', label: 'Admin', icon: ShieldCheck }] : []),
   ];
 
+  const isActive = (to) =>
+    to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
+
+  // Avatar: show profile image or initials
+  const initials = (user?.name ?? 'U')
+    .split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2);
+
   return (
     <>
-      {/* ── TOP NAV (desktop + mobile header) ── */}
+      {/* ── TOP NAV ── */}
       <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
 
@@ -78,7 +84,7 @@ export function Nav() {
             <span>BathEase</span>
           </Link>
 
-          {/* Desktop nav links */}
+          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-1">
             {desktopLinks.map((l) => (
               <Link key={l.to} to={l.to}
@@ -94,18 +100,30 @@ export function Nav() {
 
           {/* Right actions */}
           <div className="flex items-center gap-2">
+            {/* Theme toggle */}
             <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
               {currentTheme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
+
             {user ? (
-              <>
-                <span className="hidden sm:inline text-sm text-muted-foreground">
-                  Hi, {user.name?.split(' ')[0]}
-                </span>
-                <Button variant="outline" size="sm" onClick={logout}>
-                  <LogOut className="h-4 w-4 mr-1" /> Sign out
-                </Button>
-              </>
+              /* ── Avatar button — opens profile panel ── */
+              <button
+                onClick={() => setPanelOpen(true)}
+                className="flex items-center gap-2 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                aria-label="Open profile"
+              >
+                {user.profileImage ? (
+                  <img
+                    src={user.profileImage}
+                    alt={user.name}
+                    className="h-9 w-9 rounded-full object-cover border-2 border-primary/30 hover:border-primary transition-colors"
+                  />
+                ) : (
+                  <div className="h-9 w-9 rounded-full bg-gradient-hero text-primary-foreground text-xs font-bold grid place-items-center border-2 border-primary/30 hover:border-primary transition-colors">
+                    {initials}
+                  </div>
+                )}
+              </button>
             ) : (
               <Link to="/auth">
                 <Button size="sm" className="shadow-soft">Sign in</Button>
@@ -116,7 +134,7 @@ export function Nav() {
       </header>
 
       {/* ── BOTTOM TAB BAR (mobile only) ── */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl border-t border-border/60 safe-bottom">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl border-t border-border/60">
         <div className="flex items-stretch h-16">
           {tabLinks.map(({ to, label, icon: Icon }) => {
             const active = isActive(to);
@@ -128,10 +146,8 @@ export function Nav() {
                   active ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >
-                <div className={`grid h-8 w-8 place-items-center rounded-xl transition-all ${
-                  active ? 'bg-primary/10' : ''
-                }`}>
-                  <Icon className={`transition-all ${active ? 'h-5 w-5' : 'h-5 w-5'}`} strokeWidth={active ? 2.5 : 1.8} />
+                <div className={`grid h-8 w-8 place-items-center rounded-xl transition-all ${active ? 'bg-primary/10' : ''}`}>
+                  <Icon className="h-5 w-5" strokeWidth={active ? 2.5 : 1.8} />
                 </div>
                 <span className={`text-[10px] font-medium leading-none ${active ? 'text-primary' : 'text-muted-foreground'}`}>
                   {label}
@@ -142,7 +158,15 @@ export function Nav() {
         </div>
       </nav>
 
-      {/* Spacer — only needed on mobile to push content below the bottom tab bar height is handled by footer pb */}
+      {/* ── USER PROFILE PANEL ── */}
+      {panelOpen && user && (
+        <UserProfilePanel
+          user={user}
+          onClose={() => setPanelOpen(false)}
+          onLogout={logout}
+          onUserUpdate={(updated) => setUser({ ...user, ...updated })}
+        />
+      )}
     </>
   );
 }
