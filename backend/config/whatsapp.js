@@ -30,8 +30,8 @@ const sendAdminWhatsApp = async (booking) => {
       : '';
 
     const message =
-      `🛁 *New BathEase Booking!*\n\n` +
-      `📋 ID: ${booking.bookingId}\n` +
+      `🛁 *BathEase — New Booking Confirmed!*\n\n` +
+      `📋 Booking ID: ${booking.bookingId}\n` +
       `👤 Customer: ${booking.userEmail}\n` +
       `📞 WhatsApp: ${booking.whatsapp}\n` +
       `🚿 Bathrooms: ${booking.bathroomCount}` +
@@ -41,7 +41,10 @@ const sendAdminWhatsApp = async (booking) => {
       `📍 Address: ${booking.address}\n` +
       `💰 Total: ₹${booking.price?.total}\n` +
       `💳 Payment: ${booking.paymentMethod.toUpperCase()}\n\n` +
-      `✅ Status: Confirmed`;
+      `✅ Status: Confirmed\n` +
+      `━━━━━━━━━━━━━━━━━\n` +
+      `BathEase Professional Cleaning\n` +
+      `bath-ease.vercel.app`;
 
     await client.messages.create({
       body: message,
