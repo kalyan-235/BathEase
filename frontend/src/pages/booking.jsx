@@ -12,7 +12,7 @@ import { useMemo, useState } from 'react';
 import { MINI_SERVICES, computePrice, inr, genId, TIME_SLOTS } from '@/lib/bathease';
 import { api, session } from '@/lib/api';
 import { toast } from 'sonner';
-import { Minus, Plus, Tag, CalendarDays } from 'lucide-react';
+import { Minus, Plus, Tag, CalendarDays, MapPin, Loader2 } from 'lucide-react';
 
 export default function BookingPage() {
   const navigate = useNavigate();
@@ -34,6 +34,30 @@ export default function BookingPage() {
   const [whatsapp, setWhatsapp]   = useState(user?.whatsapp ?? '');
   const [payment, setPayment]     = useState('razorpay');
   const [loading, setLoading]     = useState(false);
+  const [lat, setLat]             = useState(null);
+  const [lng, setLng]             = useState(null);
+  const [locating, setLocating]   = useState(false);
+
+  const captureLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation not supported by your browser');
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLat(pos.coords.latitude);
+        setLng(pos.coords.longitude);
+        setLocating(false);
+        toast.success('Location captured successfully');
+      },
+      (err) => {
+        setLocating(false);
+        toast.error('Could not get location — please enter address manually');
+      },
+      { timeout: 10000, enableHighAccuracy: true }
+    );
+  };
 
   const price = useMemo(() => computePrice(bathrooms, minis, coupon), [bathrooms, minis, coupon]);
 
@@ -62,6 +86,8 @@ export default function BookingPage() {
         whatsapp,
         paymentMethod: payment,
         price,
+        lat,
+        lng,
       });
       toast.success(`Booking confirmed — ${booking.bookingId}`, {
         description: `${inr(price.total)} · ${slot} on ${new Date(date).toDateString()}`,
@@ -164,6 +190,51 @@ export default function BookingPage() {
               <Label htmlFor="addr">Service address</Label>
               <Textarea id="addr" value={address} onChange={(e) => setAddress(e.target.value)}
                 placeholder="Flat, building, street, city" className="mt-1" />
+
+              {/* Location button */}
+              <div className="mt-2 flex items-center gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={captureLocation}
+                  disabled={locating}
+                  className="gap-2 text-xs"
+                >
+                  {locating
+                    ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    : <MapPin className="h-3.5 w-3.5" />
+                  }
+                  {locating ? 'Getting location…' : 'Use my current location'}
+                </Button>
+                {lat && lng && (
+                  <span className="flex items-center gap-1 text-xs text-green-600 font-medium">
+                    <MapPin className="h-3 w-3" />
+                    Location captured ✓
+                  </span>
+                )}
+              </div>
+
+              {/* Mini map preview if location captured */}
+              {lat && lng && (
+                <a
+                  href={`https://www.google.com/maps?q=${lat},${lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 flex items-center gap-2 p-3 rounded-xl border border-green-200 bg-green-50 hover:bg-green-100 transition-colors group"
+                >
+                  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-green-500 text-white">
+                    <MapPin className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-green-700">Live location pinned</p>
+                    <p className="text-xs text-green-600 truncate">
+                      {lat.toFixed(5)}, {lng.toFixed(5)} — tap to preview
+                    </p>
+                  </div>
+                  <span className="text-xs text-green-600 group-hover:underline shrink-0">Open map →</span>
+                </a>
+              )}
             </div>
             <div>
               <Label htmlFor="wa">WhatsApp number</Label>

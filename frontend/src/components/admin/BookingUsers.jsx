@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 import {
   CalendarCheck, BellRing, Search, Filter,
-  CheckCircle2, Clock, Loader2, XCircle, AlertCircle,
+  CheckCircle2, Clock, Loader2, XCircle, AlertCircle, MapPin,
 } from 'lucide-react';
 
 const STATUS_STYLES = {
@@ -116,6 +116,7 @@ export function BookingUsers({ bookings, onChange }) {
                 <Th>Date / Slot</Th>
                 <Th>Service</Th>
                 <Th>Total</Th>
+                <Th>Location</Th>
                 <Th>Staff</Th>
                 <Th>Status</Th>
                 <Th>Notify</Th>
@@ -124,7 +125,7 @@ export function BookingUsers({ bookings, onChange }) {
             <tbody>
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="py-10 text-center text-muted-foreground">
+                  <td colSpan={9} className="py-10 text-center text-muted-foreground">
                     No bookings found.
                   </td>
                 </tr>
@@ -157,6 +158,23 @@ export function BookingUsers({ bookings, onChange }) {
                       </div>
                     </Td>
                     <Td className="font-bold text-primary">{inr(b.price?.total)}</Td>
+                    <Td>
+                      {b.location?.lat && b.location?.lng ? (
+                        <a
+                          href={`https://www.google.com/maps?q=${b.location.lat},${b.location.lng}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="Open in Google Maps"
+                        >
+                          <Button size="sm" variant="outline" className="gap-1.5 text-green-600 border-green-300 hover:bg-green-50 h-8 px-3 text-xs">
+                            <MapPin className="h-3.5 w-3.5" />
+                            View Map
+                          </Button>
+                        </a>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">No location</span>
+                      )}
+                    </Td>
                     <Td>
                       <Select value={b.assignedStaff ?? ''} onValueChange={(v) => assign(b.bookingId, v)}>
                         <SelectTrigger className="h-8 w-[130px] text-xs">

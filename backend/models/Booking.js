@@ -29,6 +29,10 @@ const bookingSchema = new mongoose.Schema({
   slot: { type: String, required: true },
   address: { type: String, required: true },
   whatsapp: { type: String, required: true },
+  location: {
+    lat: { type: Number, default: null },
+    lng: { type: Number, default: null },
+  },
   paymentMethod: { type: String, enum: ['razorpay', 'upi', 'cash'], required: true },
   status: {
     type: String,

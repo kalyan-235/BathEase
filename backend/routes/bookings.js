@@ -9,7 +9,7 @@ router.post('/', protect, async (req, res) => {
   try {
     const {
       bookingId, bathroomCount, miniServices, date, slot,
-      address, whatsapp, paymentMethod, price,
+      address, whatsapp, paymentMethod, price, lat, lng,
     } = req.body;
 
     if (!address || !whatsapp || !date || !slot) {
@@ -32,6 +32,7 @@ router.post('/', protect, async (req, res) => {
       slot,
       address,
       whatsapp,
+      location: { lat: lat || null, lng: lng || null },
       paymentMethod,
       status: 'confirmed',
       price,
@@ -41,6 +42,35 @@ router.post('/', protect, async (req, res) => {
     sendAdminWhatsApp(booking).catch(() => {});
 
     res.status(201).json(booking);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/bookings/test-whatsapp — admin only, sends a test message
+router.get('/test-whatsapp', protect, adminOnly, async (req, res) => {
+  const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_FROM, ADMIN_WHATSAPP } = process.env;
+
+  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_WHATSAPP_FROM || !ADMIN_WHATSAPP) {
+    return res.status(400).json({
+      error: 'Twilio env vars missing',
+      missing: {
+        TWILIO_ACCOUNT_SID: !TWILIO_ACCOUNT_SID,
+        TWILIO_AUTH_TOKEN:  !TWILIO_AUTH_TOKEN,
+        TWILIO_WHATSAPP_FROM: !TWILIO_WHATSAPP_FROM,
+        ADMIN_WHATSAPP:     !ADMIN_WHATSAPP,
+      }
+    });
+  }
+
+  try {
+    const twilio = require('twilio')(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+    await twilio.messages.create({
+      body: '✅ BathEase test — WhatsApp notifications are working!',
+      from: TWILIO_WHATSAPP_FROM,
+      to:   ADMIN_WHATSAPP,
+    });
+    res.json({ success: true, message: `Test message sent to ${ADMIN_WHATSAPP}` });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

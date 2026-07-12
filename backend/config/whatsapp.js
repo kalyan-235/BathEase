@@ -39,6 +39,9 @@ const sendAdminWhatsApp = async (booking) => {
       `📅 Date: ${new Date(booking.date).toDateString()}\n` +
       `⏰ Slot: ${booking.slot}\n` +
       `📍 Address: ${booking.address}\n` +
+      (booking.location?.lat && booking.location?.lng
+        ? `🗺️ Live Location: https://www.google.com/maps?q=${booking.location.lat},${booking.location.lng}\n`
+        : '') +
       `💰 Total: ₹${booking.price?.total}\n` +
       `💳 Payment: ${booking.paymentMethod.toUpperCase()}\n\n` +
       `✅ Status: Confirmed\n` +
